@@ -1,5 +1,11 @@
 {
-  "private": true,
+  "name": "app4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "scripts": {
     "dev": "rimraf dist && webpack --config webpack-hmr.config.js --watch",
     "build": "rimraf dist && webpack --config webpack.config.js",

@@ -5,7 +5,11 @@ module.exports = {
   mode: 'production',
   entry: ['./src/main.js'],
   target: 'node',
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals({
+      modulesDir: path.resolve(__dirname, '../../node_modules'),
+    }),
+  ],
   resolve: {
     extensions: ['.js'],
   },
