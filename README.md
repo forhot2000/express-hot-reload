@@ -388,7 +388,7 @@ router.get('/', (req, res) => {
 export default router;
 ```
 
-最后，测试下结果
+测试下新加的 controller
 
 ```shell
 curl http://localhost:3000/posts
@@ -398,4 +398,39 @@ curl http://localhost:3000/posts
 
 ```json
 [{"id":1,"title":"post 1","content":"content of the post"}]
+```
+
+这种方式存在一个问题，每次都要去扫描 src 目录，导致部署的时候还需要将 src 目录复制到服务器，而这些 src 目录下的文件除了提供一个 filename 就没有其它作用了，我认为这不是一个好的代码。
+
+如果要避免这种隐式的动态加载，可以将它改成如下代码：
+
+```js
+// 显示声明有哪些 controllers
+const controllerNames = [
+  'posts',
+];
+
+async function loadControllers(app) {
+  const controllers = controllerNames.map((name) => ({ name }));
+  for (let i = 0; i < controllers.length; i++) {
+    const controller = controllers[i];
+    try {
+      const module = await import(`./controllers/${controller.name}`);
+      controller.router = module.default;
+    } catch (err) {
+      // console.error(err);
+    }
+  }
+
+  controllers.forEach(({ name, router }) => {
+    if (router) {
+      const path = `/${name}`;
+      app.use(path, router);
+      console.log(`mount controller '${name}' on '${path}'`);
+    } else {
+      console.error(`cannot find controller '${name}'`);
+    }
+  });
+}
+
 ```
