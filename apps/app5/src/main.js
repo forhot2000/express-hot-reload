@@ -12,10 +12,7 @@ async function bootstrap() {
   const server = createServer(app);
 
   // 加载 controllers
-  const controllers = await loadControllers(app);
-  controllers.forEach((controller) => {
-    app.use(`/${controller.name}`, controller.router);
-  });
+  await loadControllers(app);
 
   app.all('*', (req, res) => {
     const n = inc();
