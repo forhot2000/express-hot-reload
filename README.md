@@ -2,7 +2,7 @@
 
 ## 创建项目
 
-首先，创建一个 express 的创建项目
+首先，创建一个 express 的创建项目（[app1](/forhot2000/express-hot-reload/tree/master/apps/app1)）。
 
 ```shell
 mkdir your-project
@@ -56,7 +56,7 @@ OK，这就启动了一个基本的 express app 了。
 
 ## 使用 nodemon 自动重启
 
-使用 nodemon 检测文件变动，重启服务，这种方式很简单，不需要修改现有代码。
+使用 nodemon 检测文件变动，重启服务，这种方式很简单，不需要修改现有代码（[app2](/forhot2000/express-hot-reload/tree/master/apps/app2)）。
 
 安装 nodemon
 
@@ -96,7 +96,7 @@ npm install --save-dev nodemon
 
 ## 使用 webpack HMR 实现模块热加载
 
-webpack 的 HMR 功能会通知到哪些文件发生了变化需要重新加载，这个功能被广泛用在前端开发框架中，修改代码后立即刷新页面，其实它也还可以被用在服务器端代码的加载过程中，让我们来看看如何实现。
+webpack 的 HMR 功能会通知到哪些文件发生了变化需要重新加载，这个功能被广泛用在前端开发框架中，修改代码后立即刷新页面，其实它也还可以被用在服务器端代码的加载过程中，让我们来看看如何实现（[app3](/forhot2000/express-hot-reload/tree/master/apps/app3)）。
 
 首先，添加依赖包
 
@@ -311,7 +311,7 @@ curl http://localhost:3000/
 
 ### 动态加载目录的问题
 
-另外还有一个常见的问题，有时候我们需要动态的加载某个目录下的所有文件，这个可以用 await import 来加载模块来完成。
+另外还有一个常见的问题，有时候我们需要动态的加载某个目录下的所有文件，这个可以用 await import 来加载模块来完成（[app4](/forhot2000/express-hot-reload/tree/master/apps/app4)）。
 
 让我们来改一下 `main.js`，将 `bootstrap` 改成 `async` 方法，再增加一个 `loadControllers` 方法
 
@@ -402,7 +402,7 @@ curl http://localhost:3000/posts
 
 这种方式存在一个问题，每次都要去扫描 src 目录，导致部署的时候还需要将 src 目录复制到服务器，而这些 src 目录下的文件除了提供一个 filename 就没有其它作用了，我认为这不是一个好的代码。
 
-如果要避免这种隐式的动态加载，可以将它改成如下代码：
+如果要避免这种隐式的动态加载，可以将它改成如下代码（[app5](/forhot2000/express-hot-reload/tree/master/apps/app5)）：
 
 ```js
 // 显示声明有哪些 controllers
