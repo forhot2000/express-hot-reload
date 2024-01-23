@@ -1,14 +1,13 @@
-# 实现 Express 服务器端代码热加载
+# 实现 Express 服务器端代码热加载 <!-- omit in toc -->
 
-- [实现 Express 服务器端代码热加载](#实现-express-服务器端代码热加载)
-  - [创建项目](#创建项目)
-  - [使用 nodemon 自动重启](#使用-nodemon-自动重启)
-  - [使用 webpack HMR 实现模块热加载](#使用-webpack-hmr-实现模块热加载)
-    - [发布到生产环境](#发布到生产环境)
-    - [动态加载目录的问题](#动态加载目录的问题)
+- [1. 创建 Express 项目](#1-创建-express-项目)
+- [2. 使用 nodemon 自动重启](#2-使用-nodemon-自动重启)
+- [3. 使用 webpack HMR 实现模块热加载](#3-使用-webpack-hmr-实现模块热加载)
+  - [3.1 配置 webpack HMR](#31-配置-webpack-hmr)
+  - [3.2 发布到生产环境](#32-发布到生产环境)
+  - [3.3 动态加载目录的问题](#33-动态加载目录的问题)
 
-
-## 创建项目
+# 1. 创建 Express 项目
 
 首先，创建一个 express 的创建项目（[app1](/apps/app1)）。
 
@@ -47,7 +46,7 @@ bootstrap();
   // ...
   "scripts": {
     "start": "node src/main.js"
-  },
+  }
   // ...
 }
 ```
@@ -62,7 +61,7 @@ OK，这就启动了一个基本的 express app 了。
 
 但是，每次修改代码后，都需要手动重新启动服务，对于开发来说，这是个非常烦人的工作，下面让我们一步一步来优化它。
 
-## 使用 nodemon 自动重启
+# 2. 使用 nodemon 自动重启
 
 使用 nodemon 检测文件变动，重启服务，这种方式很简单，不需要修改现有代码（[app2](/apps/app2)）。
 
@@ -95,16 +94,17 @@ npm install --save-dev nodemon
   "ext": "js",
   "ignore": ["*.test.js", "*.spec.js"]
 }
-
 ```
 
 如上所示，nodemon 的使用非常简单，配合 ts-node 它还能支持 typescript，已经能满足大多数用户的使用场景了。
 
 不过，当项目变的越来越大，每次改动一个地方就重新启动服务就变得有点麻烦了。
 
-## 使用 webpack HMR 实现模块热加载
+# 3. 使用 webpack HMR 实现模块热加载
 
 webpack 的 HMR 功能会通知到哪些文件发生了变化需要重新加载，这个功能被广泛用在前端开发框架中，修改代码后立即刷新页面，其实它也还可以被用在服务器端代码的加载过程中，让我们来看看如何实现（[app3](/apps/app3)）。
+
+## 3.1 配置 webpack HMR
 
 首先，添加依赖包
 
@@ -143,7 +143,7 @@ import { greet } from './hello';
 function bootstrap() {
   const app = express();
 
-  // 默认情况下 express 会自动创建 server，这里手动创建 server 
+  // 默认情况下 express 会自动创建 server，这里手动创建 server
   // 是为了在后面调用 server.close() 关闭旧的服务
   const server = createServer(app);
 
@@ -174,7 +174,7 @@ bootstrap();
     "dev": "rimraf dist && webpack --config webpack-hmr.config.js --watch",
     "build": "rimraf dist && webpack --config webpack.config.js",
     "start": "node dist/server.js"
-  },
+  }
   // ...
 }
 ```
@@ -281,8 +281,7 @@ curl http://localhost:3000/
 
 再试下修改 `hello.js`，webpack 会重新编译并加载 `hello.js`，因为 `main.js` 引用了 `hello.js`，所以虽然不会重新编译 `main.js`，但是它也会被重新加载。
 
-
-```js
+```log
 ...
 asset server.js 46.1 KiB [emitted] (name: main)
 asset main.56dcdc90891aac75fe1c.hot-update.js 1.37 KiB [emitted] [immutable] [hmr] (name: main)
@@ -313,11 +312,11 @@ curl http://localhost:3000/
 
 可以看到，`count.js` 中的计数任然没有被重置，说明只要不修改 `count.js` 及其依赖项，`count.js` 就不会被重新加载。
 
-### 发布到生产环境
+## 3.2 发布到生产环境
 
-生产环境下，我们不需要热加载功能，那么我们可以运行 `npm run build` 构建代码，然后再运行   `npm start`，使用构建后的代码启动服务，这样优先保证线上环境的性能。
+生产环境下，我们不需要热加载功能，那么我们可以运行 `npm run build` 构建代码，然后再运行 `npm start`，使用构建后的代码启动服务，这样优先保证线上环境的性能。
 
-### 动态加载目录的问题
+## 3.3 动态加载目录的问题
 
 另外还有一个常见的问题，有时候我们需要动态的加载某个目录下的所有文件，这个可以用 await import 来加载模块来完成（[app4](/apps/app4)）。
 
@@ -336,7 +335,9 @@ async function bootstrap() {
   // 动态加载 controllers 目录下的所有文件
   await loadControllers(app);
 
-  app.all('*', (req, res) => { /* ... */ });
+  app.all('*', (req, res) => {
+    /* ... */
+  });
   //...
 }
 
@@ -359,18 +360,18 @@ bootstrap();
 ```
 
 > **提示**
-> 
+>
 > 遍历目录文件的时候需要使用源文件的目录，而不能使用文件的相对目录
-> 
+>
 > 错误的代码
-> 
+>
 > ```js
-> // 编译后的代码会提示找不到目录 ./dist/controllers 
-> readdir(path.join(__dirname, 'controllers')); 
+> // 编译后的代码会提示找不到目录 ./dist/controllers
+> readdir(path.join(__dirname, 'controllers'));
 > ```
-> 
+>
 > 正确的代码
-> 
+>
 > ```js
 > readdir(path.resolve('./src/controllers'));
 > ```
@@ -405,7 +406,7 @@ curl http://localhost:3000/posts
 输出
 
 ```json
-[{"id":1,"title":"post 1","content":"content of the post"}]
+[{ "id": 1, "title": "post 1", "content": "content of the post" }]
 ```
 
 这种方式存在一个问题，每次都要去扫描 src 目录，导致部署的时候还需要将 src 目录复制到服务器，而这些 src 目录下的文件除了提供一个 filename 就没有其它作用了，我认为这不是一个好的代码。
@@ -414,9 +415,7 @@ curl http://localhost:3000/posts
 
 ```js
 // 显示声明有哪些 controllers
-const controllerNames = [
-  'posts',
-];
+const controllerNames = ['posts'];
 
 async function loadControllers(app) {
   const controllers = controllerNames.map((name) => ({ name }));
@@ -440,5 +439,4 @@ async function loadControllers(app) {
     }
   });
 }
-
 ```
