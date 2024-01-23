@@ -36,11 +36,11 @@ bootstrap();
 
 ```json
 {
-  ...
+  // ...
   "scripts": {
     "start": "node src/main.js"
   },
-  ...
+  // ...
 }
 ```
 
@@ -68,12 +68,12 @@ npm install --save-dev nodemon
 
 ```json
 {
-  ...
+  // ...
   "scripts": {
     "dev": "nodemon src/main.js",
     "start": "node src/main.js"
   }
-  ...
+  // ...
 }
 ```
 
@@ -161,13 +161,13 @@ bootstrap();
 
 ```json
 {
-  ...
+  // ...
   "scripts": {
     "dev": "rimraf dist && webpack --config webpack-hmr.config.js --watch",
     "build": "rimraf dist && webpack --config webpack.config.js",
     "start": "node dist/server.js"
   },
-  ...
+  // ...
 }
 ```
 
