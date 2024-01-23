@@ -7,9 +7,11 @@
   - [3.2 发布到生产环境](#32-发布到生产环境)
   - [3.3 动态加载目录的问题](#33-动态加载目录的问题)
 
+直接查看代码请转到 [/apps](/apps)
+
 # 1. 创建 Express 项目
 
-首先，创建一个 express 的创建项目（[app1](/apps/app1)）。
+首先，创建一个 express 的创建项目。
 
 ```shell
 mkdir your-project
@@ -51,6 +53,8 @@ bootstrap();
 }
 ```
 
+完整代码请查看 [/apps/app1](/apps/app1)。
+
 启动服务
 
 ```shell
@@ -63,7 +67,7 @@ OK，这就启动了一个基本的 express app 了。
 
 # 2. 使用 nodemon 自动重启
 
-使用 nodemon 检测文件变动，重启服务，这种方式很简单，不需要修改现有代码（[app2](/apps/app2)）。
+使用 nodemon 检测文件变动，重启服务，这种方式很简单，不需要修改现有代码。
 
 安装 nodemon
 
@@ -96,13 +100,15 @@ npm install --save-dev nodemon
 }
 ```
 
+完整代码请查看 [/apps/app2](/apps/app2)。
+
 如上所示，nodemon 的使用非常简单，配合 ts-node 它还能支持 typescript，已经能满足大多数用户的使用场景了。
 
 不过，当项目变的越来越大，每次改动一个地方就重新启动服务就变得有点麻烦了。
 
 # 3. 使用 webpack HMR 实现模块热加载
 
-webpack 的 HMR 功能会通知到哪些文件发生了变化需要重新加载，这个功能被广泛用在前端开发框架中，修改代码后立即刷新页面，其实它也还可以被用在服务器端代码的加载过程中，让我们来看看如何实现（[app3](/apps/app3)）。
+webpack 的 HMR 功能会通知到哪些文件发生了变化需要重新加载，这个功能被广泛用在前端开发框架中，修改代码后立即刷新页面，其实它也还可以被用在服务器端代码的加载过程中，让我们来看看如何实现。
 
 ## 3.1 配置 webpack HMR
 
@@ -235,6 +241,8 @@ module.exports = {
 
 开发模式下，我们使用 `npm run dev` 启动服务，启用热加载功能。
 
+完整代码请查看 [/apps/app3](/apps/app3)。
+
 接下来，我们来测试一下热加载
 
 ```shell
@@ -318,7 +326,7 @@ curl http://localhost:3000/
 
 ## 3.3 动态加载目录的问题
 
-另外还有一个常见的问题，有时候我们需要动态的加载某个目录下的所有文件，这个可以用 await import 来加载模块来完成（[app4](/apps/app4)）。
+另外还有一个常见的问题，有时候我们需要动态的加载某个目录下的所有文件，这个可以用 await import 来加载模块来完成。
 
 让我们来改一下 `main.js`，将 `bootstrap` 改成 `async` 方法，再增加一个 `loadControllers` 方法
 
@@ -397,6 +405,8 @@ router.get('/', (req, res) => {
 export default router;
 ```
 
+完整代码请查看 [/apps/app4](/apps/app4)。
+
 测试下新加的 controller
 
 ```shell
@@ -411,7 +421,7 @@ curl http://localhost:3000/posts
 
 这种方式存在一个问题，每次都要去扫描 src 目录，导致部署的时候还需要将 src 目录复制到服务器，而这些 src 目录下的文件除了提供一个 filename 就没有其它作用了，我认为这不是一个好的代码。
 
-如果要避免这种隐式的动态加载，可以将它改成如下代码（[app5](/apps/app5)）：
+如果要避免这种隐式的动态加载，可以将它改成如下代码：
 
 ```js
 // 显示声明有哪些 controllers
@@ -440,3 +450,5 @@ async function loadControllers(app) {
   });
 }
 ```
+
+完整代码请查看 [/apps/app5](/apps/app5)。
