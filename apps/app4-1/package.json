@@ -1,0 +1,27 @@
+{
+  "name": "app4-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "dev": "rimraf dist && webpack --config webpack-hmr.config.js --watch",
+    "build": "rimraf dist && webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/webpack": "^5.28.5",
+    "@types/webpack-env": "^1.18.4",
+    "rimraf": "^5.0.5",
+    "run-script-webpack-plugin": "^0.2.0",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

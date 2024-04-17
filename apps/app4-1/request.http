@@ -1,0 +1,19 @@
+###
+
+@host = http://localhost:3000
+
+###
+
+GET {{host}}/
+
+###
+
+GET {{host}}/posts
+
+###
+
+GET {{host}}/foo
+
+###
+
+GET {{host}}/foo/bar
