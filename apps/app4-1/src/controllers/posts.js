@@ -1,8 +1,12 @@
 import { Router } from 'express';
+import { delay } from '../lib/delay';
+
+console.log('[module] src/controller/posts');
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  await delay(10);
   res.send([
     {
       id: 1,

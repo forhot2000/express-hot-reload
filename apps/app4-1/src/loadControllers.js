@@ -4,18 +4,18 @@
 export async function loadControllers(app) {
   let controllers = [];
   if (typeof __webpack_require__ === 'function') {
-    const r = require.context('./controllers', true, /\.(ts|js)$/);
+    const r = require.context('./controllers', true, /\.(ts|js)$/, 'lazy');
     // console.log(r.keys());
     const s = r.keys();
     // console.log(s);
-    s.forEach((k) => {
-      const module = r(k);
+    for (const k of s) {
+      const module = await r(k);
       if (module && module.default) {
         const router = module.default;
         const path = getRouterPath(k);
         controllers.push({ path, router });
       }
-    });
+    }
     controllers.sort((a, b) => -a.path.localeCompare(b.path));
   } else {
     // try {
